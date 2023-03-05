@@ -37,3 +37,23 @@ Je rajoute une url product product/<str:slug>/
 on va utiliser get_object_or_404 (attribué à une variable qu'on utilisera dans le contxt)
 puis on lie notre index au détail
 On peut accéder au détail avec {{ product.get_absolute_url }}
+
+10. Créer le modèle utilisateur (normalement début de projet)<br>
+nouvelle app car en général les users on gère dans une app dédiée
+On créer un abstractuser avec un pass. Puis ds setting AUTH_USER_MODEL = "accounts.Shopper"
+
+11. formulaire d'inscription <br>
+Dans le html on gère le lien inscription avec un if not user.is_authenticated
+
+TOUJOURS Y PENSER : request.POST est un Dictionnaire
+request.POST("username), clé username car dans el html input avec name="username"
+
+on récupère notre modele d'utilisateur avec get_user_model
+get_user_model va chercher dans settings.AUTH_USER_MODEL
+
+12. Afficher l'utilisateur connecté et afficher la vue de log out<br>
+déjà dans le admin.py
+ensuite base.html is authenticated on affiche le username
+Aussi afficher un logout.
+
+13. Views logout_user
