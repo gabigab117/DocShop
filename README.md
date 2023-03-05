@@ -56,4 +56,7 @@ déjà dans le admin.py
 ensuite base.html is authenticated on affiche le username
 Aussi afficher un logout.
 
-13. Views logout_user
+13. Views logout_user<br>
+
+14. connexion<br>
+
