@@ -59,4 +59,9 @@ Aussi afficher un logout.
 13. Views logout_user<br>
 
 14. connexion<br>
+si POST, authenticate, si user login
 
+15. la gestion du panier <br>
+1 modèle articles, 1 modèle panier
+modele order : on utilise l'utilisateur et product en foreign key
+modele cart : panier
