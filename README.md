@@ -65,3 +65,13 @@ si POST, authenticate, si user login
 1 modèle articles, 1 modèle panier
 modele order : on utilise l'utilisateur et product en foreign key
 modele cart : panier
+
+16. ajouter un article dans le panier<br>
+Créer une vue def add_to_cart et on utilise le template detail.html
+'''
+get_or_create retourne deux choses : l'objet en question qu'il ai été créé ou qu'il existe déjà et aussi
+une autre variable pour savoir si l'objet a été créé ou non.
+'''
+
+17. afficher le panier <br>
+url
