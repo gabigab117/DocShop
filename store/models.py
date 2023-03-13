@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+
 from shop.settings import AUTH_USER_MODEL
 
 '''
@@ -41,6 +43,7 @@ class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     ordered = models.BooleanField(default=False)
+    ordered_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.product.name} - {self.quantity}"
@@ -58,8 +61,17 @@ class Cart(models.Model):
     user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
     # plusieurs articles peuvent être ajoutés donc ManytoMany
     orders = models.ManyToManyField(Order)
-    ordered = models.BooleanField(default=False)
-    ordered_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.user.username
+
+    def delete(self, *args, **kwargs):
+        for order in self.orders.all():
+            order.ordered = True
+            order.ordered_date = timezone.now()
+            order.save()
+
+        # je détache les articles de mon panier avec clear
+        self.orders.clear()
+        
+        super().delete(*args, **kwargs)

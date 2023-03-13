@@ -75,3 +75,17 @@ une autre variable pour savoir si l'objet a été créé ou non.
 
 17. afficher le panier <br>
 url
+
+18. le lien vers le panier<br>
+Je peux faire if user.cart et afficher le nombre d'articles {{ user.cart.orders.count }}
+
+19. supprimer le panier<br>
+récupérer le panier, supprimer ce qu'il y a dedans et supprimer le panier
+
+20. modifier les modèles order et cart<br>
+ordered date on déplace vers le modèle order
+
+21. modifier le delete cart<br>
+la logique de la vue on va la mettre dans le modele Cart en surchargeant la méthode delete
+et il faut modifier la vue add to cart car Order.objects.get_or_create(user=user, ordered=False, product=product) afin
+de ne pas modifier les Order déjà en True.

@@ -20,7 +20,9 @@ def add_to_cart(request, slug):
     # le panier : s'il n'existe pas il est créé, sinon on le récupère
     cart, _ = Cart.objects.get_or_create(user=user)
     # regarde si on a un objet order qui correspond à notre utilisateur et si le produit correspond à product
-    order, created = Order.objects.get_or_create(user=user, product=product)
+    # ordered = false car on cible article pas déjà été commandé. On va recréer un article et pas modifier
+    # l'existant True.
+    order, created = Order.objects.get_or_create(user=user, ordered=False, product=product)
     # si le produit n'était pas dans le panier et qu'il est créé
     if created:
         cart.orders.add(order)
@@ -41,3 +43,18 @@ une autre variable pour savoir si l'objet a été créé ou non.
 def cart(request):
     cart = get_object_or_404(Cart, user=request.user)
     return render(request, "store/cart.html", context={"orders": cart.orders.all()})
+
+
+def delete_cart(request):
+    # récupère le panier
+    # cart = request.user.cart
+    if cart := request.user.cart:
+        # la logique se retrouve directement dans la méthode delete du modele cart
+        cart.delete()
+
+    return redirect('index')
+
+
+'''
+J'ai utilise un walrus := qui permet de faire deux choses en une ligne
+'''
