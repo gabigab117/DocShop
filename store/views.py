@@ -1,7 +1,14 @@
+import stripe
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
+from shop import settings
 from .models import Product, Cart, Order
+
+
+stripe.api_key = settings.STRIPE_API_KEY
 
 
 def index(request):
@@ -58,3 +65,35 @@ def delete_cart(request):
 '''
 J'ai utilise un walrus := qui permet de faire deux choses en une ligne
 '''
+
+
+def create_checkout_session(request):
+    # récupère le panier
+    cart = request.user.cart
+    # compréhension de liste avec un dictionnaire (id + qté)
+    line_items = [{"price": order.product.stripe_id,
+                   "quantity": order.quantity} for order in cart.orders.all()]
+
+    session = stripe.checkout.Session.create(
+        locale="fr",
+        line_items=line_items,
+        mode='payment',
+        # il faut une url absolue car je suis sur Stripe à ce moment-là
+        success_url=request.build_absolute_uri(reverse('checkout-success')),
+        cancel_url='http://127.0.0.1:8000',
+    )
+
+    return redirect(session.url, code=303)
+
+
+def checkout_success(request):
+    return render(request, "store/success.html")
+
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+
+    print(payload)
+
+    return HttpResponse(status=200)

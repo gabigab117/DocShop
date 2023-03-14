@@ -89,3 +89,43 @@ ordered date on déplace vers le modèle order
 la logique de la vue on va la mettre dans le modele Cart en surchargeant la méthode delete
 et il faut modifier la vue add to cart car Order.objects.get_or_create(user=user, ordered=False, product=product) afin
 de ne pas modifier les Order déjà en True.
+
+22. package stripe<br>
+créer un compte et installer. pip install --upgrade stripe
+Pour authentifier les requêtes i lfaut une clé api avec stripe (onglet dev et clé api)
+import environ
+
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / "shop/.env")
+STRIPE_API_KEY = env("STRIPE_API_KEY")
+
+23. vue session de paiement<br>
+ds vue importer stripe et 
+stripe.api_key = settings.STRIPE_API_KEY
+doc https://stripe.com/docs/payments/accept-a-payment
+copier coller du code de session à return
+penser à locale="fr"
+
+24. champ pour l'id stripe<br>
+modifier le modele du produit por add champ qui stock l'identifiant de stripe
+fera le lien entre bdd et stripe
+
+25. créer les produits sur stripe<br>
+stripe onglet produits. On prend la clé price
+
+26. intégrer le checkout stripe<br>
+dans la vue checkout avec compréhension de liste et line_items
+
+27. ajouter la vue de succès<br>
+Créer vue qui retourne un template. Et on modifie success_url du checkout
+  # il faut une url absolue car je suis sur Stripe à ce moment-là
+        success_url=request.build_absolute_uri(reverse('checkout-success')),
+
+28. installer Stripe Cli<br>
+https://youtu.be/jJu8vQH7hLY
+doc stripe create your event handler
+
+29. ajouter webhook stripe<br>
+https://stripe.com/docs/cli/listen
+Créer vue stripe webhook
+stripe listen --forward-to 127.0.0.1:8000/stripe-webhook/

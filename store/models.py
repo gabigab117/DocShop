@@ -21,6 +21,7 @@ class Product(models.Model):
     stock = models.IntegerField(default=0)
     description = models.TextField(blank=True)
     thumbnail = models.ImageField(upload_to="products", blank=True, null=True)
+    stripe_id = models.CharField(max_length=90, blank=True)
 
     def __str__(self):
         return f"{self.name} ({self.stock})"
