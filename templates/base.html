@@ -14,7 +14,7 @@
 <a href="{% url 'signup' %}">S'inscrire</a>
 {% endif %}
 
-{% if user.cart %}
+{% if user.cart and not user.cart.orders.ordered %}
 <a href="{% url 'cart' %}">Mon panier ( {{ user.cart.orders.count }} )</a>
 <!--
 utilisateur - paniers - articles que l'on compte

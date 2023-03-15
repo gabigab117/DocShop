@@ -1,13 +1,18 @@
 import stripe
+import environ
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
+from accounts.models import Shopper
 from shop import settings
+from shop.settings import BASE_DIR
 from .models import Product, Cart, Order
 
 
+environ.Env.read_env(BASE_DIR / "shop/.env")
 stripe.api_key = settings.STRIPE_API_KEY
 
 
@@ -90,10 +95,44 @@ def checkout_success(request):
     return render(request, "store/success.html")
 
 
+env = environ.Env()
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    endpoint_secret = env("endpoint_secret")
+    event = None
 
-    print(payload)
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
 
+    # on veut récupérer l'évènement checkout.session.completed, il s'agit d'un dico
+    if event['type'] == "checkout.session.completed":
+        # dans event on a un objet qui permet de récup mail user produits acheté etc ds data object
+        data = event['data']['object']
+        return complete_order(data)
+
+    # Passed signature verification
+    return HttpResponse(status=200)
+
+
+# pas de requête ici on créer une fonction qui sera retournée dans la vue stripe_webhook
+def complete_order(data):
+    try:
+        # dans object (voir var data) on a l'email
+        user_email = data['customer_details']['email']
+    except KeyError:
+        return HttpResponse("Invalid user email", status=404)
+
+    user = get_object_or_404(Shopper, email=user_email)
+    user.cart.delete()
+    # 200 pour indiquer que le paiement a été procéssé correctement
     return HttpResponse(status=200)

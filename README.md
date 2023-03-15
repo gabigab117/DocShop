@@ -118,7 +118,7 @@ dans la vue checkout avec compréhension de liste et line_items
 
 27. ajouter la vue de succès<br>
 Créer vue qui retourne un template. Et on modifie success_url du checkout
-  # il faut une url absolue car je suis sur Stripe à ce moment-là
+il faut une url absolue car je suis sur Stripe à ce moment-là
         success_url=request.build_absolute_uri(reverse('checkout-success')),
 
 28. installer Stripe Cli<br>
@@ -129,3 +129,19 @@ doc stripe create your event handler
 https://stripe.com/docs/cli/listen
 Créer vue stripe webhook
 stripe listen --forward-to 127.0.0.1:8000/stripe-webhook/
+https://stripe.com/docs/payments/checkout/fulfill-orders
+
+30. compléter la transaction <br>
+Dans la vue stripe_webhook on veut récupérer l'évènement checkout.session.completed
+
+31. renseigner l'adresse webhook stripe
+stripe - developers - webhook
+
+32. utiliser email comme user
+champ utilisé pour se connecter : (il est automatiquement considéré comme requis)
+USERNAME_FIELD = "email"
+champs obligatoires pour la création d'un compte / je laisse vide pour le moment
+REQUIRED_FIELDS = []
+
+33. créer un gestionnaire d'utilisateurs personnalisé
+le manager, du coup on doit le modifier
