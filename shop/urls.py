@@ -2,12 +2,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from store.views import index, product_detail, add_to_cart, cart, delete_cart, create_checkout_session, checkout_success, stripe_webhook
-from accounts.views import signup, logout_user, login_user
+from accounts.views import signup, logout_user, login_user, profil
 from shop import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name="index"),
+    path('profil/', profil, name="profil"),
     path('signup/', signup, name="signup"),
     path('login/', login_user, name="login"),
     path('logout/', logout_user, name="logout"),

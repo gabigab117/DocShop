@@ -1,5 +1,9 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.forms import model_to_dict
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, login, logout, authenticate
+from .forms import UserForm
 
 User = get_user_model()
 
@@ -33,3 +37,27 @@ def login_user(request):
             return redirect('index')
 
     return render(request, "accounts/login.html")
+
+
+@login_required
+def profil(request):
+    if request.method == "POST":
+        # vérifier si le bon mdp est entré
+        is_valid = authenticate(email=request.POST.get("email"), password=request.POST.get("password"))
+        if is_valid:
+            user = request.user
+            user.first_name = request.POST.get("first_name")
+            user.last_name = request.POST.get("last_name")
+            user.email = request.POST.get("email")
+            user.save()
+        else:
+            # on va passer par messages, ils sont associés à la session de l'utilisateur, donc on peut les transporter
+            # mais si je boucle sur les messages ils sont supprimés ?
+            # même pas besoin de passer par le context. Une variable dans le html
+            messages.add_message(request, messages.ERROR, "le mot de passe n'est pas valide.")
+
+        return redirect("profil")
+
+    # les valeurs initiales, utiliser model_to_dict() Mais on exclu le champ password
+    form = UserForm(initial=model_to_dict(request.user, exclude="password"))
+    return render(request, "accounts/profil.html", context={'form': form})

@@ -31,12 +31,16 @@ class Product(models.Model):
         return reverse("product", kwargs={"slug": self.slug})
 
 # article (order)
+
+
 '''
 utilisateur,
 produit,
 quantité
 commandé ou non
 '''
+
+
 class Order(models.Model):
     # user peut avoir plusieurs order
     user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -50,12 +54,15 @@ class Order(models.Model):
         return f"{self.product.name} - {self.quantity}"
 
 # panier utilisateur (cart)
+
+
 '''
 utilisateur,
 Articles
 commandé ou non
 date commande
 '''
+
 
 class Cart(models.Model):
     # one to one car l'utilisateur ne peut avoir qu'un seul panier. Si j'utilise Foreign als unique=True

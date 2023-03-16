@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from iso3166 import countries
 
 
 class CustomUserManager(BaseUserManager):
@@ -15,12 +16,11 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password, **kwargs):
-        user = self.create_user(email=email, password=password, **kwargs)
-        user.is_admin = True
-        user.is_staff = True
-        user.is_superuser = True
-        user.save()
-        return user
+        kwargs['is_staff'] = True
+        kwargs['is_superuser'] = True
+        kwargs['is_active'] = True
+
+        return self.create_user(email=email, password=password, **kwargs)
 
 
 class Shopper(AbstractUser):
@@ -33,3 +33,18 @@ class Shopper(AbstractUser):
     # champs obligatoires pour la création d'un compte / je laisse vide pour le moment
     REQUIRED_FIELDS = []
     objects = CustomUserManager()
+
+
+class ShippingAddress(models.Model):
+    # comme je peux avoir plusieurs adresses pour un user pas de one mais une foreign
+    user = models.ForeignKey(Shopper, on_delete=models.CASCADE)
+    name = models.CharField(max_length=240)
+    address_1 = models.CharField(max_length=1024, help_text="Adresse de voirie et numéro de rue")
+    address_2 = models.CharField(max_length=1024, help_text="Bâtiment, étage, lieu-dit...", blank=True)
+    city = models.CharField(max_length=1024)
+    zip_code = models.CharField(max_length=32)
+    # liste de tuple avec en 1er deux lettres (bd) et après le pays
+    country = models.CharField(max_length=2, choices=[(c.alpha2.lower(), c.name) for c in countries])
+
+    def __str__(self):
+        return f"{self.user}, {self.name}"

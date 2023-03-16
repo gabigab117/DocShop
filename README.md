@@ -145,3 +145,14 @@ REQUIRED_FIELDS = []
 
 33. créer un gestionnaire d'utilisateurs personnalisé
 le manager, du coup on doit le modifier
+34. Ajouter un modele adresse de livraison <br>
+on va le rajouter dans le models.Py de accounts
+
+35. ajouter le champ pour le pays avec iso3166<br>
+compréhension de liste dans un choices
+
+36. vue de profil et formulaire d'édition<br>
+forms.py on passe par un modelform qui utilise Shopper
+un html profil.html
+les valeurs initiales, utiliser model_to_dict()
+afficher msg d'erreur on passe par django.contrib messages
