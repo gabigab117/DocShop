@@ -156,3 +156,31 @@ forms.py on passe par un modelform qui utilise Shopper
 un html profil.html
 les valeurs initiales, utiliser model_to_dict()
 afficher msg d'erreur on passe par django.contrib messages
+
+37. ajouter info client stripe <br>
+vue create session checkout
+utiliser la doc stripe. pour l'email c'est customer_email
+https://stripe.com/docs/api/checkout/sessions/object
+On va modifier modele shopper pour récupérer l'identifiant stripe
+
+38. sauvegarder l'id et l'adresse de livraison <br>
+on passe par une clé customer de stripe. Il faut rajouter un champ stripe_id dans le modele shopper
+voir store views.
+
+39. afficher les adresses dans la vue de profil <br>
+accounts/views.py
+Et dans la foreign keys de shippingadresses mettre un related_name
+passer au context de profil.html
+
+40. modifier affichage de l'adresse <br>
+méthode str à modif, accounts/models.py
+on créer une constante, on applique .format, en utilisant une copie de l'attribut self.__str__
+puis unpack
+
+41. autre méthode pour afficher dans le html<br>
+je préfère utiliser un fichier html pour afficher les addresses plutôt qu'un fichier py
+en gabarit il existe include pour intégrér un fichier html dans un autre
+
+42. envoyer l'user enregistré à Stripe <br>
+cette fois si j'ai déjà un user.stripe_id on va l'envoyer à stripe
+créer une struc conditionnelle dans create_checkout_session

@@ -6,10 +6,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
-from accounts.models import Shopper
+from accounts.models import Shopper, ShippingAddress
 from shop import settings
 from shop.settings import BASE_DIR
 from .models import Product, Cart, Order
+from pprint import pprint
 
 
 environ.Env.read_env(BASE_DIR / "shop/.env")
@@ -79,14 +80,24 @@ def create_checkout_session(request):
     line_items = [{"price": order.product.stripe_id,
                    "quantity": order.quantity} for order in cart.orders.all()]
 
-    session = stripe.checkout.Session.create(
-        locale="fr",
-        line_items=line_items,
-        mode='payment',
+    checkout_data = {
+        "locale": "fr",
+        "line_items": line_items,
+        "mode": 'payment',
+        # voir ds la doc. On passe un dico avec une liste de pays autorisés
+        "shipping_address_collection": {"allowed_countries": ["FR", "BE"]},
         # il faut une url absolue car je suis sur Stripe à ce moment-là
-        success_url=request.build_absolute_uri(reverse('checkout-success')),
-        cancel_url='http://127.0.0.1:8000',
-    )
+        "success_url": request.build_absolute_uri(reverse('checkout-success')),
+        "cancel_url": 'http://127.0.0.1:8000',
+    }
+    # une condition pour savoir si on a déjà un stripe_id pour notre user
+    if request.user.stripe_id:
+        checkout_data["customer"] = request.user.stripe_id
+    else:
+        checkout_data["customer_email"] = request.user.email
+    # tout ce que j'avais ici je l'ai passé à checkout_data en dictionnaire
+    # on va utiliser l'unpacking
+    session = stripe.checkout.Session.create(**checkout_data)
 
     return redirect(session.url, code=303)
 
@@ -96,6 +107,8 @@ def checkout_success(request):
 
 
 env = environ.Env()
+
+
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
@@ -118,21 +131,64 @@ def stripe_webhook(request):
     if event['type'] == "checkout.session.completed":
         # dans event on a un objet qui permet de récup mail user produits acheté etc ds data object
         data = event['data']['object']
-        return complete_order(data)
+        pprint(data)
+        try:
+            user = get_object_or_404(Shopper, email=data['customer_details']['email'])
+            # dans object (voir var data) on a l'email
+        except KeyError:
+            return HttpResponse("Invalid user email", status=404)
+
+        # deux fonctions du dessous
+        complete_order(data=data, user=user)
+        save_shipping_adress(data=data, user=user)
+
+        return HttpResponse(status=200)
 
     # Passed signature verification
     return HttpResponse(status=200)
 
 
 # pas de requête ici on créer une fonction qui sera retournée dans la vue stripe_webhook
-def complete_order(data):
-    try:
-        # dans object (voir var data) on a l'email
-        user_email = data['customer_details']['email']
-    except KeyError:
-        return HttpResponse("Invalid user email", status=404)
-
-    user = get_object_or_404(Shopper, email=user_email)
+def complete_order(data, user):
+    user.stripe_id = data['id']
     user.cart.delete()
+    # faire un save pour le stripe_id
+    user.save()
+
     # 200 pour indiquer que le paiement a été procéssé correctement
+    return HttpResponse(status=200)
+
+
+def save_shipping_adress(data, user):
+    """
+   "shipping_details": {
+    "address": {
+      "city": "60650 - ONS EN BRAY",
+      "country": "FR",
+      "line1": "5 rue xxxxxx",
+      "line2": null,
+      "postal_code": "60650",
+      "state": ""
+    },
+    "name": "GABRIEL TROUV\u00c9"
+    """
+    try:
+        address = data["shipping_details"]["address"]
+        name = data["shipping_details"]["name"]
+        city = address["city"]
+        country = address["country"]
+        line1 = address["line1"]
+        line2 = address["line2"]
+        zip_code = address["postal_code"]
+    except KeyError:
+        return HttpResponse(status=400)
+
+    ShippingAddress.objects.get_or_create(user=user,
+                                          name=name,
+                                          city=city,
+                                          country=country.lower(),
+                                          address_1=line1,
+                                          # si line2 est none je mets plutot un str vide
+                                          address_2=line2 or "",
+                                          zip_code=zip_code)
     return HttpResponse(status=200)

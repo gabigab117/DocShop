@@ -16,4 +16,13 @@
     {% endif %}
     <button type="submit">Sauvegarder</button>
 </form>
+
+
+<h1>Adresses</h1>
+{% for address in addresses %}
+{{ address|linebreaks }}
+<!-- mais je peux utiliser une autre méthode pour afficher :
+-->
+{% include 'accounts/address.html' %}
+{% endfor %}
 {% endblock %}

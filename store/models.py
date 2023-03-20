@@ -14,6 +14,7 @@ Product
 - Image
 '''
 
+
 class Product(models.Model):
     name = models.CharField(max_length=128)
     slug = models.SlugField(max_length=128)
@@ -71,7 +72,7 @@ class Cart(models.Model):
     orders = models.ManyToManyField(Order)
 
     def __str__(self):
-        return self.user.username
+        return self.user.email
 
     def delete(self, *args, **kwargs):
         for order in self.orders.all():

@@ -12,9 +12,9 @@ def signup(request):
     if request.method == "POST":
         # traiter le formulaire
         # le nom des clés dans le dictionnaire sont définits par name="" dans la balise html de l'input
-        username = request.POST.get("username")
+        email = request.POST.get("email")
         password = request.POST.get("password")
-        user = User.objects.create_user(username=username, password=password)
+        user = User.objects.create_user(email=email, password=password)
         login(request, user)
         return redirect('index')
 
@@ -48,7 +48,6 @@ def profil(request):
             user = request.user
             user.first_name = request.POST.get("first_name")
             user.last_name = request.POST.get("last_name")
-            user.email = request.POST.get("email")
             user.save()
         else:
             # on va passer par messages, ils sont associés à la session de l'utilisateur, donc on peut les transporter
@@ -60,4 +59,8 @@ def profil(request):
 
     # les valeurs initiales, utiliser model_to_dict() Mais on exclu le champ password
     form = UserForm(initial=model_to_dict(request.user, exclude="password"))
-    return render(request, "accounts/profil.html", context={'form': form})
+    # récupérer toutes les adresses de l'utilisateur, mettre le shipping en minuscule
+    addresses = request.user.addresses.all()
+
+    return render(request, "accounts/profil.html", context={'form': form,
+                                                            "addresses": addresses})
