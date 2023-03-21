@@ -1,5 +1,6 @@
 import stripe
 import environ
+from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -10,6 +11,7 @@ from accounts.models import Shopper, ShippingAddress
 from shop import settings
 from shop.settings import BASE_DIR
 from .models import Product, Cart, Order
+from .forms import OrderForm
 from pprint import pprint
 
 
@@ -55,7 +57,14 @@ une autre variable pour savoir si l'objet a été créé ou non.
 
 def cart(request):
     cart = get_object_or_404(Cart, user=request.user)
-    return render(request, "store/cart.html", context={"orders": cart.orders.all()})
+    # formset auquel on précise le modele et le formulaire. extra 0 car je ne veux pas afficher des formulaires vides
+    # je l'attribue à une variable ce qui me permet de créer une class.
+    OrderFormSet = modelformset_factory(Order, form=OrderForm, extra=0)
+    # puis on va créer une instance
+    # je veux récupérer uniquement les articles dans le panier de l'utilisateur
+    formset = OrderFormSet(queryset=Order.objects.filter(user=request.user))
+    return render(request, "store/cart.html", context={"orders": cart.orders.all(),
+                                                       "forms": formset})
 
 
 def delete_cart(request):
@@ -95,6 +104,8 @@ def create_checkout_session(request):
         checkout_data["customer"] = request.user.stripe_id
     else:
         checkout_data["customer_email"] = request.user.email
+        # créer le client dans stripe la première fois
+        checkout_data["customer_creation"] = "always"
     # tout ce que j'avais ici je l'ai passé à checkout_data en dictionnaire
     # on va utiliser l'unpacking
     session = stripe.checkout.Session.create(**checkout_data)
@@ -150,7 +161,7 @@ def stripe_webhook(request):
 
 # pas de requête ici on créer une fonction qui sera retournée dans la vue stripe_webhook
 def complete_order(data, user):
-    user.stripe_id = data['id']
+    user.stripe_id = data['customer']
     user.cart.delete()
     # faire un save pour le stripe_id
     user.save()

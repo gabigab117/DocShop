@@ -184,3 +184,23 @@ en gabarit il existe include pour intégrér un fichier html dans un autre
 42. envoyer l'user enregistré à Stripe <br>
 cette fois si j'ai déjà un user.stripe_id on va l'envoyer à stripe
 créer une struc conditionnelle dans create_checkout_session
+
+43. changer l'adresse par dft stripe <br>
+dans le modele shipping address on va ajouter une méthode set_default pour indiquer l'adresse par def
+annotation de type :
+ user: Shopper = models.ForeignKey(Shopper, on_delete=models.CASCADE, related_name="addresses")
+https://stripe.com/docs/api/customers/update
+
+44. changer l'adresse par defaut dans la BDD <br>
+créer un chanp default dans notre modele
+récupérer toutes les adresses et attribuer False
+Et notre instance en cours True puis on save
+
+45. modifier l'adresse par défaut dans la vue <br>
+address.html on va ajouter des indications pour dire si def ou non
+puis créer une vue avec pk pour modifier l'adresse par def
+
+46. modifier les quantités d'articles dans le panier <br>
+on va utiliser le modele form set, utiliser plusieurs formulaires
+store forms.py
+et vue cart on va créer le modelformset_factory()

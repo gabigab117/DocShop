@@ -1,7 +1,9 @@
+import stripe
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from iso3166 import countries
+from shop.settings import STRIPE_API_KEY
 
 
 class CustomUserManager(BaseUserManager):
@@ -50,7 +52,9 @@ ADDRESS_FORMAT = """
 
 class ShippingAddress(models.Model):
     # comme je peux avoir plusieurs adresses pour un user pas de one mais une foreign
-    user = models.ForeignKey(Shopper, on_delete=models.CASCADE, related_name="addresses")
+    # je peux ajouter une annotation de type afin d'avoir l'auto complétion user: Shopper
+    # ainsi on précise que user va être un objet de type Shopper
+    user: Shopper = models.ForeignKey(Shopper, on_delete=models.CASCADE, related_name="addresses")
     name = models.CharField(max_length=240)
     address_1 = models.CharField(max_length=1024, help_text="Adresse de voirie et numéro de rue")
     address_2 = models.CharField(max_length=1024, help_text="Bâtiment, étage, lieu-dit...", blank=True)
@@ -58,6 +62,7 @@ class ShippingAddress(models.Model):
     zip_code = models.CharField(max_length=32)
     # liste de tuple avec en 1er deux lettres (bd) et après le pays
     country = models.CharField(max_length=2, choices=[(c.alpha2.lower(), c.name) for c in countries])
+    default = models.BooleanField(default=False)
 
     def __str__(self):
         # __dict__ : un dico avec les attributs de l'instance en clé et en valeur les valeurs des attributs
@@ -68,3 +73,33 @@ class ShippingAddress(models.Model):
         data = self.__dict__.copy()
         data.update(country=self.get_country_display())
         return ADDRESS_FORMAT.format(**data).strip("\n")
+
+    # changer l'adresse par défaut stripe
+    # https://stripe.com/docs/api/customers/update
+    def set_default(self):
+        stripe.api_key = STRIPE_API_KEY
+        # vérifier si on a déjà un client stripe
+        if not self.user.stripe_id:
+            raise ValueError(f"User {self.user.email} n'a pas de customer id")
+
+        # récupérer toutes les adresses de l'utilisateur (related_name), queryset de toutes que l'on False avc update
+        self.user.addresses.update(default=False)
+        # puis sur l'adresse en cours True
+        self.default = True
+        self.save()
+
+        stripe.Customer.modify(
+            # "cus_NZJ296BoT4SGlF", on remplace par
+            self.user.stripe_id,
+            shipping={"name": self.name,
+                      "address": self.as_dict()},
+            address=self.as_dict(),
+        )
+
+    # je vais attribuer le dictionnaire à une méthode que j'avais initialement passé à address = {}
+    def as_dict(self):
+        return {"city": self.city,
+                "country": self.country,
+                "line1": self.address_1,
+                "line2": self.address_2,
+                "postal_code": self.zip_code}

@@ -2,7 +2,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from store.views import index, product_detail, add_to_cart, cart, delete_cart, create_checkout_session, checkout_success, stripe_webhook
-from accounts.views import signup, logout_user, login_user, profil
+from accounts.views import signup, logout_user, login_user, profil, set_default_shipping_address
 from shop import settings
 
 urlpatterns = [
@@ -12,6 +12,7 @@ urlpatterns = [
     path('signup/', signup, name="signup"),
     path('login/', login_user, name="login"),
     path('logout/', logout_user, name="logout"),
+    path('profil/set-default/<int:pk>/', set_default_shipping_address, name="set-default-shipping"),
     path('stripe-webhook/', stripe_webhook, name="stripe-webhook"),
     path('cart/delete/', delete_cart, name="delete-cart"),
     path('cart/', cart, name="cart"),

@@ -1,5 +1,5 @@
 <div>
-  <h3>{{ address.name }}</h3>
+  <h3>{{ address.name }} {% if address.default %} - défaut {% endif %}</h3>
 <p>{{ address.address_1 }}</p>
   {% if address.address_2 %}
   <p>{{ address.address_2 }}</p>
@@ -9,4 +9,9 @@
   puis j'utilise get_country_display pour afficher France et pas le fr de la BDD
   -->
   <p>{{ address.get_country_display|upper }}</p>
+
+  {% if not address.default %}
+
+  <a href="{% url 'set-default-shipping' address.pk %}">Mettre par défaut</a>
+  {% endif %}
 </div>

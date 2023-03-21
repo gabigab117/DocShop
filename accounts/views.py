@@ -1,9 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.forms import model_to_dict
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, login, logout, authenticate
 from .forms import UserForm
+from accounts.models import ShippingAddress
 
 User = get_user_model()
 
@@ -64,3 +65,11 @@ def profil(request):
 
     return render(request, "accounts/profil.html", context={'form': form,
                                                             "addresses": addresses})
+
+
+@login_required
+def set_default_shipping_address(request, pk):
+    # j'ajoute une annotation de type
+    address: ShippingAddress = get_object_or_404(ShippingAddress, pk=pk)
+    address.set_default()
+    return redirect('profil')
