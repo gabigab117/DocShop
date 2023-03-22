@@ -1,7 +1,7 @@
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from store.views import index, product_detail, add_to_cart, cart, delete_cart, create_checkout_session, checkout_success, stripe_webhook
+from store.views import index, product_detail, add_to_cart, cart, delete_cart, create_checkout_session, checkout_success, stripe_webhook, update_quantities
 from accounts.views import signup, logout_user, login_user, profil, set_default_shipping_address
 from shop import settings
 
@@ -16,6 +16,7 @@ urlpatterns = [
     path('stripe-webhook/', stripe_webhook, name="stripe-webhook"),
     path('cart/delete/', delete_cart, name="delete-cart"),
     path('cart/', cart, name="cart"),
+    path('cart/update_quantities/', update_quantities, name="update-quantities"),
     path('cart/success/', checkout_success, name="checkout-success"),
     path('cart/create-checkout-session', create_checkout_session, name="create-checkout-session"),
     path('product/<str:slug>/', product_detail, name="product"),

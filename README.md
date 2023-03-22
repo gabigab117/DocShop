@@ -204,3 +204,7 @@ puis créer une vue avec pk pour modifier l'adresse par def
 on va utiliser le modele form set, utiliser plusieurs formulaires
 store forms.py
 et vue cart on va créer le modelformset_factory()
+puis cart.html on affiche nos forms en gabarit
+pour traiter la requete je pourrais le faire dans ma vue cart directement. Mais je vais créer une autre vue
+donc créer un chemin d'url et views update_quantities
+pour lier le formulaire à la vue dans le html on mets après method action="{% url 'update-quantities' %}"

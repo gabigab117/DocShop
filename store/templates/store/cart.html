@@ -1,13 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% for order in orders %}
 
-<h2>{{ order.product.name }}</h2>
-<img src="{{ order.product.thumbnail.url }}" alt="{{ order.product.name }}" style="max-width: 250px;">
-<p>{{ order.quantity }} dans le panier</p>
-
+<!--
+ modelformset factory
+ le form manager permet de gérer les multiples formulaires de manière invisible
+ puis je boucle sur les formulaires
+ comme on passe par le formulaire il faut passer par l'instance pour afficher nos objets
+ on aura que la quantité car dans forms.py on a sel que la qté
+ -->
+<form method="POST" action="{% url 'update-quantities' %}">
+    {% csrf_token %}
+    {{ forms.management_form }}
+    {% for form in forms %}
+    <div>
+<h3>{{ form.instance.product.name }}</h3>
+        <img src="{{ form.instance.product.thumbnail.url }}" alt="image produit" style="max-width: 250px;">
+        <p>{{ form.instance.product.descripton }}</p>
+        {{ form.as_p }}
+    </div>
 {% endfor %}
+    <button type="submit">Mettre à jour les quantités</button>
+</form>
+
+
+
+
 <form action="{% url 'create-checkout-session' %}" method="POST">
     {% csrf_token %}
 <button type="submit">Procéder au paiement</button>
