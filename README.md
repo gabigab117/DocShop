@@ -128,7 +128,7 @@ doc stripe create your event handler
 29. ajouter webhook stripe<br>
 https://stripe.com/docs/cli/listen
 Créer vue stripe webhook
-stripe listen --forward-to 127.0.0.1:8000/stripe-webhook/
+stripe listen --forward-to 127.0.0.1:8000/store/stripe-webhook/
 https://stripe.com/docs/payments/checkout/fulfill-orders
 
 30. compléter la transaction <br>
@@ -217,3 +217,16 @@ mais je veux que mon panier soit supprimé si je n'ai plus d'éléments dedans
 48. slufigy ! <br>
 
 49. séparer le fichoer d'url par app <br>
+
+50. supprimer une adresse <br>
+rajouter un bouton dans le address.html
+
+51. ajouter des tests unitaires <br>
+plusieurs fichiers selon type de test
+52. créer un premier test <br>
+dans store créer sous dossier tests (je supprime le tests.py existant) et je créer un __init__.py
+premier test test_models.py (voir fichier)
+puis on lance un test avec python manage.py test (va chercher fichier qui commence par test) : ça lance tout
+si que dans l'app je fais python manage.py test nomapp.tests
+python manage.py test nomapp.tests.test_models
+python manage.py test nomapp.tests.test_models.ProductTest

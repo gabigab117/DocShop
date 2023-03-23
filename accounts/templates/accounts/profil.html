@@ -6,23 +6,25 @@
 {% csrf_token %}
 {{ form.as_p }}
 
-    {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-
-        {% endfor %}
-    </ul>
-    {% endif %}
     <button type="submit">Sauvegarder</button>
 </form>
 
-
+{% if addresses %}
 <h1>Adresses</h1>
+{% endif %}
 {% for address in addresses %}
 <!-- {{ address|linebreaks }} -->
 <!-- mais je peux utiliser une autre méthode pour afficher :
 -->
 {% include 'accounts/address.html' %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li><h2>{{ message }}</h2></li>
+
+        {% endfor %}
+    </ul>
+    {% endif %}
+
 {% endfor %}
 {% endblock %}

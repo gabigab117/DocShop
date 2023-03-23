@@ -14,4 +14,9 @@
 
   <a href="{% url 'accounts:set-default-shipping' address.pk %}">Mettre par défaut</a>
   {% endif %}
+  <p>
+    <a href="{%url 'accounts:delete-address' address.pk %}">Supprimer cette adresse</a>
+
+  </p>
+
 </div>

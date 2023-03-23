@@ -112,7 +112,7 @@ def create_checkout_session(request):
         # voir ds la doc. On passe un dico avec une liste de pays autorisés
         "shipping_address_collection": {"allowed_countries": ["FR", "BE"]},
         # il faut une url absolue car je suis sur Stripe à ce moment-là
-        "success_url": request.build_absolute_uri(reverse('checkout-success')),
+        "success_url": request.build_absolute_uri(reverse('store:checkout-success')),
         "cancel_url": 'http://127.0.0.1:8000',
     }
     # une condition pour savoir si on a déjà un stripe_id pour notre user

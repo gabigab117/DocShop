@@ -52,7 +52,7 @@ def profil(request):
             user.save()
         else:
             # on va passer par messages, ils sont associés à la session de l'utilisateur, donc on peut les transporter
-            # mais si je boucle sur les messages ils sont supprimés ?
+            # mais si je boucle sur les messages ils sont supprimés
             # même pas besoin de passer par le context. Une variable dans le html
             messages.add_message(request, messages.ERROR, "le mot de passe n'est pas valide.")
 
@@ -72,4 +72,16 @@ def set_default_shipping_address(request, pk):
     # j'ajoute une annotation de type
     address: ShippingAddress = get_object_or_404(ShippingAddress, pk=pk)
     address.set_default()
+    return redirect('accounts:profil')
+
+
+@login_required
+def delete_address(request, pk):
+    address = get_object_or_404(ShippingAddress, pk=pk, user=request.user)
+
+    if address.default:
+        messages.add_message(request, messages.ERROR, "Impossible de supprimer une adresse par défaut")
+    else:
+        address.delete()
+
     return redirect('accounts:profil')
