@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-
+from django.utils.text import slugify
 from shop.settings import AUTH_USER_MODEL
 
 '''
@@ -17,7 +17,7 @@ Product
 
 class Product(models.Model):
     name = models.CharField(max_length=128)
-    slug = models.SlugField(max_length=128)
+    slug = models.SlugField(max_length=128, blank=True)
     price = models.FloatField(default=0.0)
     stock = models.IntegerField(default=0)
     description = models.TextField(blank=True)
@@ -27,9 +27,19 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.name} ({self.stock})"
 
+    def save(self, *args, **kwargs):
+        '''
+       Je peux faire self.slug = self.slug or slugify(self.name)
+       en gros si il y a un slug c'est bon sinon on slugify
+        '''
+        if not self.slug:
+            self.slug = slugify(self.name)
+
+        return super().save(*args, **kwargs)
+
     def get_absolute_url(self):
         # nom url + slug (on le retrouve dans url <str:slug>)
-        return reverse("product", kwargs={"slug": self.slug})
+        return reverse("store:product", kwargs={"slug": self.slug})
 
 # article (order)
 

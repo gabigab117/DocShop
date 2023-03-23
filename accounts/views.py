@@ -56,7 +56,7 @@ def profil(request):
             # même pas besoin de passer par le context. Une variable dans le html
             messages.add_message(request, messages.ERROR, "le mot de passe n'est pas valide.")
 
-        return redirect("profil")
+        return redirect("accounts:profil")
 
     # les valeurs initiales, utiliser model_to_dict() Mais on exclu le champ password
     form = UserForm(initial=model_to_dict(request.user, exclude="password"))
@@ -72,4 +72,4 @@ def set_default_shipping_address(request, pk):
     # j'ajoute une annotation de type
     address: ShippingAddress = get_object_or_404(ShippingAddress, pk=pk)
     address.set_default()
-    return redirect('profil')
+    return redirect('accounts:profil')

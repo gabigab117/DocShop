@@ -46,7 +46,7 @@ def add_to_cart(request, slug):
     else:
         order.quantity += 1
         order.save()
-    return redirect(reverse("product", kwargs={"slug": slug}))
+    return redirect(reverse("store:product", kwargs={"slug": slug}))
 
 
 '''
@@ -56,29 +56,31 @@ une autre variable pour savoir si l'objet a été créé ou non.
 
 
 def cart(request):
-    cart = get_object_or_404(Cart, user=request.user)
+    orders = Order.objects.filter(user=request.user, ordered=False)
+    # si je n'ai pas d'articles en cours de commande
+    if orders.count() == 0:
+        return redirect('index')
     # formset auquel on précise le modele et le formulaire. extra 0 car je ne veux pas afficher des formulaires vierge
     # un formset car on a potentiellement plusieurs forms sur la mm page car peut-être plusieurs articles
     # je l'attribue à une variable ce qui me permet de créer une class.
     OrderFormSet = modelformset_factory(Order, form=OrderForm, extra=0)
     # puis on va créer une instance
     # je veux récupérer uniquement les articles dans le panier de l'utilisateur
-    formset = OrderFormSet(queryset=Order.objects.filter(user=request.user))
-    return render(request, "store/cart.html", context={"orders": cart.orders.all(),
-                                                       "forms": formset})
+    formset = OrderFormSet(queryset=orders)
+    return render(request, "store/cart.html", context={"forms": formset})
 
 
 def update_quantities(request):
     # on va utiliser notre form set de la vue cart
     OrderFormSet = modelformset_factory(Order, form=OrderForm, extra=0)
     # puis on récupère les données dans la requete POST (dictionnaire)
-    formset = OrderFormSet(request.POST, queryset=Order.objects.filter(user=request.user))
+    formset = OrderFormSet(request.POST, queryset=Order.objects.filter(user=request.user, ordered=False))
     # comme d'hab je vérifie la validité
     if formset.is_valid():
         # je save
         formset.save()
 
-    return redirect('cart')
+    return redirect('store:cart')
 
 
 def delete_cart(request):

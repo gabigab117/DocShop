@@ -208,3 +208,12 @@ puis cart.html on affiche nos forms en gabarit
 pour traiter la requete je pourrais le faire dans ma vue cart directement. Mais je vais créer une autre vue
 donc créer un chemin d'url et views update_quantities
 pour lier le formulaire à la vue dans le html on mets après method action="{% url 'update-quantities' %}"
+
+47. supprimer un article du panier <br>
+on va revenir dans le forms.py précédent, y ajouter un booléen puis
+surcharger la méthode save pour que récupérer l'info si coché on supprime
+mais je veux que mon panier soit supprimé si je n'ai plus d'éléments dedans
+
+48. slufigy ! <br>
+
+49. séparer le fichoer d'url par app <br>

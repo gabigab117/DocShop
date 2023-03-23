@@ -8,14 +8,14 @@
 <a href="{% url 'index' %}"> <h1>La boutique de Docstring</h1> </a>
 {% if user.is_authenticated %}
 <i>{{ user.email }}</i>
-<a href="{% url 'logout' %}">Déconnexion</a>
+<a href="{% url 'accounts:logout' %}">Déconnexion</a>
 {% else %}
-<a href="{% url 'login' %}">Connexion</a>
-<a href="{% url 'signup' %}">S'inscrire</a>
+<a href="{% url 'accounts:login' %}">Connexion</a>
+<a href="{% url 'accounts:signup' %}">S'inscrire</a>
 {% endif %}
 
 {% if user.cart and not user.cart.orders.ordered %}
-<a href="{% url 'cart' %}">Mon panier ( {{ user.cart.orders.count }} )</a>
+<a href="{% url 'store:cart' %}">Mon panier ( {{ user.cart.orders.count }} )</a>
 <!--
 utilisateur - paniers - articles que l'on compte
 -->

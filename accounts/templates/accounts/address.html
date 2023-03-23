@@ -12,6 +12,6 @@
 
   {% if not address.default %}
 
-  <a href="{% url 'set-default-shipping' address.pk %}">Mettre par défaut</a>
+  <a href="{% url 'accounts:set-default-shipping' address.pk %}">Mettre par défaut</a>
   {% endif %}
 </div>
