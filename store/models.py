@@ -84,13 +84,17 @@ class Cart(models.Model):
     def __str__(self):
         return self.user.email
 
-    def delete(self, *args, **kwargs):
+    def order_ok(self):
         for order in self.orders.all():
             order.ordered = True
             order.ordered_date = timezone.now()
             order.save()
+            self.orders.clear()
+            self.delete()
 
-        # je détache les articles de mon panier avec clear
-        self.orders.clear()
-        
+    def delete(self, *args, **kwargs):
+        orders = self.orders.all()
+
+        for order in orders:
+            order.delete()
         super().delete(*args, **kwargs)

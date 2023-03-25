@@ -178,7 +178,7 @@ def stripe_webhook(request):
 # pas de requête ici on créer une fonction qui sera retournée dans la vue stripe_webhook
 def complete_order(data, user):
     user.stripe_id = data['customer']
-    user.cart.delete()
+    user.cart.order_ok()
     # faire un save pour le stripe_id
     user.save()
 
