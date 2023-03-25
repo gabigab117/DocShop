@@ -230,3 +230,9 @@ puis on lance un test avec python manage.py test (va chercher fichier qui commen
 si que dans l'app je fais python manage.py test nomapp.tests
 python manage.py test nomapp.tests.test_models
 python manage.py test nomapp.tests.test_models.ProductTest
+
+toujours appeler une méthode en commençant par "test"
+on utilise les assert pour faire des vérifications
+la création de mon produit je la fais dans une méthode setUp
+
+53. tester le panier <br>
