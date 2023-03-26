@@ -2,8 +2,10 @@ import stripe
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.shortcuts import get_object_or_404
 from iso3166 import countries
 from shop.settings import STRIPE_API_KEY
+from store.models import Product, Cart, Order
 
 
 class CustomUserManager(BaseUserManager):
@@ -36,6 +38,26 @@ class Shopper(AbstractUser):
     # champs obligatoires pour la création d'un compte / je laisse vide pour le moment
     REQUIRED_FIELDS = []
     objects = CustomUserManager()
+
+    def add_to_cart(self, slug):
+        product = get_object_or_404(Product, slug=slug)
+        # le panier : s'il n'existe pas il est créé, sinon on le récupère
+        # user = self car je suis dans mon modèle utilisateur Shopper
+        cart, _ = Cart.objects.get_or_create(user=self)
+        # regarde si on a un objet order qui correspond à notre utilisateur et si le produit correspond à product
+        # ordered = false car on cible article pas déjà été commandé. On va recréer un article et pas modifier
+        # l'existant True.
+        order, created = Order.objects.get_or_create(user=self, ordered=False, product=product)
+        # si le produit n'était pas dans le panier et qu'il est créé
+        if created:
+            cart.orders.add(order)
+            cart.save()
+            # si déjà dans le panier
+        else:
+            order.quantity += 1
+            order.save()
+
+        return cart
 
 
 # je vais utiliser des placeholder dans variable. On l'utilisera dans méthode str de shippingadress

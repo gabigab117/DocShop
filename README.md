@@ -236,3 +236,7 @@ on utilise les assert pour faire des vérifications
 la création de mon produit je la fais dans une méthode setUp
 
 53. tester le panier <br>
+voir test. Utilisation de la méthode setUp.
+
+54. modifier add_to_cart pour la tester <br>
+On déplace le add to cart pour que ça se fasse au niveau du modèle

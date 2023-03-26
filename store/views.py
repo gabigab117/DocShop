@@ -30,22 +30,9 @@ def product_detail(request, slug):
 
 
 def add_to_cart(request, slug):
-    user = request.user
-    product = get_object_or_404(Product, slug=slug)
-    # le panier : s'il n'existe pas il est créé, sinon on le récupère
-    cart, _ = Cart.objects.get_or_create(user=user)
-    # regarde si on a un objet order qui correspond à notre utilisateur et si le produit correspond à product
-    # ordered = false car on cible article pas déjà été commandé. On va recréer un article et pas modifier
-    # l'existant True.
-    order, created = Order.objects.get_or_create(user=user, ordered=False, product=product)
-    # si le produit n'était pas dans le panier et qu'il est créé
-    if created:
-        cart.orders.add(order)
-        cart.save()
-        # si déjà dans le panier
-    else:
-        order.quantity += 1
-        order.save()
+    user: Shopper = request.user
+    user.add_to_cart(slug=slug)
+
     return redirect(reverse("store:product", kwargs={"slug": slug}))
 
 
