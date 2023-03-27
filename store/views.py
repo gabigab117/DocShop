@@ -1,5 +1,6 @@
 import stripe
 import environ
+from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -30,6 +31,7 @@ def product_detail(request, slug):
 
 
 def add_to_cart(request, slug):
+    # je récupère l'user actuel dans une variable (on aura un objet Shopper) afin d'utiliser la méthode add_to_cart
     user: Shopper = request.user
     user.add_to_cart(slug=slug)
 
@@ -42,7 +44,12 @@ une autre variable pour savoir si l'objet a été créé ou non.
 '''
 
 
+# j'ai ajouter LOGIN_URL dans settings. Mais je pourrais très bien le passer direct au décorateur
+@login_required
 def cart(request):
+    # if request.user.is_anonymous:
+    #     return redirect('index')
+
     orders = Order.objects.filter(user=request.user, ordered=False)
     # si je n'ai pas d'articles en cours de commande
     if orders.count() == 0:

@@ -60,6 +60,15 @@ class Shopper(AbstractUser):
         return cart
 
 
+'''
+Dans ce cas, la méthode add_to_cart est une méthode de l'objet utilisateur Shopper et donc self représente l'instance 
+actuelle de cet objet.
+
+En utilisant user=self, la méthode add_to_cart associe l'objet Cart et l'objet Order créés avec l'utilisateur actuel de 
+la session.
+'''
+
+
 # je vais utiliser des placeholder dans variable. On l'utilisera dans méthode str de shippingadress
 # 3 """ pour faire des retours à la ligne (je ne mets pas le \n). Il faudra utiliser un filtre gabarit pour
 # l'interpréter

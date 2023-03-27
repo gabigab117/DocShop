@@ -1,4 +1,5 @@
 from django.db import models
+from django.templatetags.static import static
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -36,6 +37,9 @@ class Product(models.Model):
             self.slug = slugify(self.name)
 
         return super().save(*args, **kwargs)
+
+    def thumbnail_url(self):
+        return self.thumbnail.url if self.thumbnail else static("1.jpg")
 
     def get_absolute_url(self):
         # nom url + slug (on le retrouve dans url <str:slug>)

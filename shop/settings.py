@@ -131,3 +131,11 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 AUTH_USER_MODEL = 'accounts.Shopper'
 STRIPE_API_KEY = env("STRIPE_API_KEY")
+
+# j'utilise la fonction static dans le modele Product. je dois donc spécifier cette variable
+STATICFILES_DIRS = [
+    BASE_DIR / "shop" / "static" / "img"
+]
+
+# pour mon décorateur login_required
+LOGIN_URL = "/account/login/"

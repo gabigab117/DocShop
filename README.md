@@ -26,7 +26,7 @@ page index vue render url ''
 
 8. Afficher les produits sur la page d'accueil<br>
 dans l'index<br>
-Pour les images product.thumbnail.url. Mais penser à créer ds setting MEDIA_URL et MEDIA_ROOT <br>
+Pour les images product.thumbnail_url. Mais penser à créer ds setting MEDIA_URL et MEDIA_ROOT <br>
 Puis spécifier dans l'url la fonction static<br>
 Je déplace le dossier products (images) dans media (ne pas rechercher les ref)<br>
 MEDIA_URL = url et MEDIA_ROOT c'est le dossier avec les images
@@ -240,3 +240,13 @@ voir test. Utilisation de la méthode setUp.
 
 54. modifier add_to_cart pour la tester <br>
 On déplace le add to cart pour que ça se fasse au niveau du modèle
+
+55. ajouter les tests pour la page d'accueil <br>
+on va créer un test_views.py dans store
+cette fois on ne test plus un modèle mais une vue
+on utilise self.client pour les requêtes
+J'ai ajouté une méthode pour les thumbnail dans Product
+
+56. tester les vues protégés <br>
+on va continuer dans store test
+pour le déco login_required je fais des modif dans mon settings
