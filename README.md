@@ -250,3 +250,5 @@ J'ai ajouté une méthode pour les thumbnail dans Product
 56. tester les vues protégés <br>
 on va continuer dans store test
 pour le déco login_required je fais des modif dans mon settings
+
+57. tester la modification du profil<br>
