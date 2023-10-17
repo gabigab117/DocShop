@@ -4,9 +4,19 @@
 
 {% for product in products %}
 
-<h2>{{ product.name }}</h2>
-<img src="{{ product.thumbnail_url }}" alt="{{ product.name }}" style="max-width: 250px;">
-<a href="{{ product.get_absolute_url }}">Voir l'article</a>
+<div class="d-flex justify-content-center align-items-center">
+    <div class="p-2">
+        <h2>{{ product.name }}</h2>
+    </div>
+    <div class="p-2">
+<img src="{{ product.thumbnail_url }}" alt="{{ product.name }}" style="max-width: 250px;" class="img-fluid rounded mx-auto d-block">
+        </div>
+    <div class="p-2">
+<p>
+<a href="{{ product.get_absolute_url }}" class="btn btn-success">Voir l'article</a>
+</p>
+    </div>
+    </div>
 <!-- 2 eme façon <a href="{% url 'store:product' slug=product.slug %}">Voir l'article</a>
 -->
 {% endfor %}

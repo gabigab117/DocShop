@@ -93,8 +93,9 @@ class Cart(models.Model):
             order.ordered = True
             order.ordered_date = timezone.now()
             order.save()
-            self.orders.clear()
-            self.delete()
+
+        self.orders.clear()
+        self.delete()
 
     def delete(self, *args, **kwargs):
         orders = self.orders.all()

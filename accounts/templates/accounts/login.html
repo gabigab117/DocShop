@@ -3,18 +3,20 @@
 {% block content %}
 <h1>Connexion</h1>
 
+<div class="d-flex p-2">
 <form method="POST">
     {% csrf_token %}
     <p>
-<label for="username">Nom d'utilisateur</label>
-    <input id="username" type="text" name="username">
+<label for="username" class="form-label">Nom d'utilisateur</label>
+    <input id="username" type="text" name="username" class="form-control">
     </p>
 <p>
-    <label for="password">Mot de passe</label>
-    <input id="password" type="password" name="password">
+    <label for="password" class="form-label">Mot de passe</label>
+    <input id="password" type="password" name="password" class="form-control">
 
 </p>
 
-    <button type="submit">Connexion</button>
+    <button type="submit" class="btn btn-primary">Connexion</button>
 </form>
+</div>
 {% endblock %}
